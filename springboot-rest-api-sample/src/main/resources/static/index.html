@@ -33,6 +33,8 @@
 		<button type="button" class="btn btn-primary" onclick="salvarUsuario()">Salvar</button>
 		<button type="button" class="btn btn-secondary" onclick="document.getElementById('formCadstroUser').reset()">Novo</button>
 		<button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalPesquisaUser">Pesquisar</button>
+		<button type="button" class="btn btn-danger" onclick="botaoDeletarDaTela()">Danger</button>
+		
 	</div>
 
 	<!-- Modal	 -->
@@ -58,6 +60,7 @@
 								<th scope="col">Nome</th>
 								<th scope="col">Idade</th>
 								<th scope="col">Editar</th>
+								<th scope="col">Deletar</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -78,6 +81,12 @@
 	<script type="text/javascript">
 	
 	
+		function botaoDeletarDaTela(){
+			var id = $('#id').val();
+			deleteUser(id);
+			document.getElementById('formCadstroUser').reset()
+		}
+	
 		function pesquisaUser() {
 			var nome = $('#nameBusca').val();
 			
@@ -88,9 +97,11 @@
 					data : "name=" + nome,
 					success : function(response) {
 						$('#tabelaresultado > tbody > tr').remove();
-						for(var i = 0; i < response.length; i++){z
-							$('#tabelaresultado > tbody').append('<tr><td>'+ response[i].id +'</td><td>' + response[i].nome + 
-								'</td><td>' + response[i].idade +  '</td><td><button type="button" onclick="colocarEmEdicao('+response[i].id +')"  class="btn btn-primary">Ver</button></td></tr>');
+						for(var i = 0; i < response.length; i++){
+							$('#tabelaresultado > tbody').append('<tr id="'+response[i].id+'"><td>'+ response[i].id +'</td><td>' + response[i].nome + 
+								'</td><td>' + response[i].idade +  '</td><td><button type="button" onclick="colocarEmEdicao('+response[i].id +
+										')"  class="btn btn-primary">Ver</button></td><td><button type="button" onclick="deleteUser('+response[i].id+
+												')" class="btn btn-danger">Apagar</button></dt></tr>');
 						}
 					} 
 				}).fail(function(xhr, status, errorThrown) {
@@ -99,25 +110,47 @@
 			}
 		}
 
-		function colocarEmEdicao(id){
+		
+
+		function deleteUser(id) {
+			if (confirm('Deseja Realmente Deletar?')) {
+
+				$.ajax({
+					method : "DELETE",
+					url : "delete",
+					data : "idUser=" + id,
+					success : function(response) {
+						$('#' + id).remove();
+						alert(response);
+
+					}
+				}).fail(
+						function(xhr, status, errorThrown) {
+							alert("Erro ao deletar Usuario Por ID: "
+									+ xhr.reponseText);
+						});
+			}
+		}
+
+		function colocarEmEdicao(id) {
 			$.ajax({
 				method : "GET",
 				url : "buscaruserid",
 				data : "iduser=" + id,
 				success : function(response) {
-					
+
 					$("#id").val(response.id);
 					$("#nome").val(response.nome);
 					$("#idade").val(response.idade);
-					
+
 					$('#modalPesquisaUser').modal('hide');
 
-				} 
+				}
 			}).fail(function(xhr, status, errorThrown) {
 				alert("Erro ao Buscar Usuario Por ID: " + xhr.reponseText);
 			});
 		}
-		
+
 		function salvarUsuario() {
 			var id = $("#id").val();
 			var nome = $("#nome").val();
