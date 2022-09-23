@@ -8,7 +8,13 @@
 	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
 	crossorigin="anonymous">
 <title>Insert title here</title>
-
+<style type="text/css">
+	html{
+		margin-left: 5%;
+		margin-right: 5%;
+		margin-top: 5%;
+	}
+</style>
 
 </head>
 <body>
@@ -53,20 +59,22 @@
 						</div>
 							<button type="button" class="btn btn-success" onclick="pesquisaUser()" >Buscar</button>
 					</form>
-					<table class="table table-striped" id="tabelaresultado">
-						<thead>
-							<tr>
-								<th scope="col">ID</th>
-								<th scope="col">Nome</th>
-								<th scope="col">Idade</th>
-								<th scope="col">Editar</th>
-								<th scope="col">Deletar</th>
-							</tr>
-						</thead>
-						<tbody>
-							
-						</tbody>
-					</table>
+					<div style="height: 300px; overflow: scroll;">
+						<table class="table table-striped" id="tabelaresultado">
+							<thead>
+								<tr>
+									<th scope="col">ID</th>
+									<th scope="col">Nome</th>
+									<th scope="col">Idade</th>
+									<th scope="col">Editar</th>
+									<th scope="col">Deletar</th>
+								</tr>
+							</thead>
+							<tbody>
+
+							</tbody>
+						</table>
+					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary"	data-bs-dismiss="modal">Fechar</button>
@@ -83,8 +91,10 @@
 	
 		function botaoDeletarDaTela(){
 			var id = $('#id').val();
+			if(id != null && id.trim() != ''){
 			deleteUser(id);
 			document.getElementById('formCadstroUser').reset()
+			}
 		}
 	
 		function pesquisaUser() {
@@ -156,6 +166,16 @@
 			var nome = $("#nome").val();
 			var idade = $("#idade").val();
 
+			if(nome == null || nome != null && nome.trim() == ''){
+				alert('informe o Nome!');
+				$('#nome').focus();
+				return;
+			}
+			if(idade == null || idade != null && idade.trim() == ''){
+				alert('informe a Idade!');
+				$('#idade').focus();
+				return;
+			}
 			$.ajax({
 				method : "POST",
 				url : "salvar",
